@@ -9,7 +9,14 @@ growpart /dev/sda 3
 lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
 resize2fs /dev/ubuntu-vg/ubuntu-lv
 
+#growpart /dev/sda 3
 #vgrename ubuntu-vg cinder-volumes
+#lvextend -l +100%FREE /dev/cinder-volumes/ubuntu-lv
+#resize2fs /dev/cinder-volumes/ubuntu-lv
+
+ipaddr=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
+sed -i '/openstack/d' /etc/hosts
+echo ${ipaddr}\t'openstack' >> /etc/hosts
 
 apt-get update
 apt install -y python3-dev libffi-dev gcc libssl-dev python3-venv python3-pip net-tools
@@ -28,13 +35,15 @@ cp -r venv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
 cp -r venv/share/kolla-ansible/ansible/inventory/* .
 mv /etc/kolla/globals.yml /etc/kolla/globals.yml.bak
 
+ipaddr = `ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
+
 cat << EOF | sudo tee /etc/kolla/globals.yml
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
 openstack_release: "yoga"
 
-kolla_internal_vip_address: "172.26.13.20"
-kolla_internal_vip_address: "172.26.13.21"
+kolla_internal_vip_address: "172.17.177.20"
+kolla_external_vip_address: "172.17.177.21"
 network_interface: "eth0"
 neutron_external_interface: "eth0"
 neutron_plugin_agent: "openvswitch"
