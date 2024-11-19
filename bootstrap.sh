@@ -2,9 +2,14 @@
 #
 # https://medium.com/btech-engineering/install-openstack-aio-with-kolla-ansible-in-ubuntu-2b98fc9de4ce
 
+
+#lvrename /dev/ubuntu-vg/ubuntu-lv /dev/ubuntu-vg/ubuntu-lv
+
 growpart /dev/sda 3
 lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
 resize2fs /dev/ubuntu-vg/ubuntu-lv
+
+#vgrename ubuntu-vg cinder-volumes
 
 apt-get update
 apt install -y python3-dev libffi-dev gcc libssl-dev python3-venv python3-pip net-tools
@@ -26,13 +31,14 @@ mv /etc/kolla/globals.yml /etc/kolla/globals.yml.bak
 cat << EOF | sudo tee /etc/kolla/globals.yml
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
-openstack_release: "2024.2"
+openstack_release: "yoga"
 
-kolla_internal_vip_address: "172.168.12.100"
-network_interface: "eth1"
+kolla_internal_vip_address: "172.26.13.20"
+kolla_internal_vip_address: "172.26.13.21"
+network_interface: "eth0"
 neutron_external_interface: "eth0"
 neutron_plugin_agent: "openvswitch"
-api_interface: "eth2"
+api_interface: "eth0"
 enable_keystone: "yes"
 enable_neutron_trunk: "yes"
 
@@ -49,6 +55,7 @@ mkdir /etc/ansible
 cat << EOF | sudo tee /etc/ansible/ansible.cfg
 [defaults]
 host_key_checking=False
+deprecation_warnings=False
 pipelining=True
 forks=100
 EOF
@@ -58,4 +65,4 @@ chown -R $USER:$USER /etc/ansible
 kolla-genpwd
 
 
-sed -i 's/yoga/2023.2/g' venv/share/kolla-ansible/requirements.yml
+sed -i 's/stable\/yoga/unmaintained\/yoga/g' venv/share/kolla-ansible/requirements.yml
