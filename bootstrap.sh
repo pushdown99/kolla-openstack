@@ -14,7 +14,7 @@ source venv/bin/activate
 pip install -U pip
 pip install docker
 pip install 'ansible>=4,<6'
-pip install git+https://opendev.org/openstack/kolla-ansible@stable/2023.2
+pip install kolla-ansible==14.2.0
 
 chown -R $USER:$USER venv
 
