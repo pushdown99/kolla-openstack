@@ -6,17 +6,14 @@
 #lvrename /dev/ubuntu-vg/ubuntu-lv /dev/ubuntu-vg/ubuntu-lv
 
 growpart /dev/sda 3
-lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
-resize2fs /dev/ubuntu-vg/ubuntu-lv
-
-#growpart /dev/sda 3
-#vgrename ubuntu-vg cinder-volumes
-#lvextend -l +100%FREE /dev/cinder-volumes/ubuntu-lv
-#resize2fs /dev/cinder-volumes/ubuntu-lv
+pvresize /dev/sda3
+lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv -r
+vgrename ubuntu-vg cinder-volumes
+#resize2fs /dev/ubuntu-vg/ubuntu-lv
 
 ipaddr=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
 sed -i '/openstack/d' /etc/hosts
-echo ${ipaddr}\t'openstack' >> /etc/hosts
+echo ${ipaddr} ' openstack' >> /etc/hosts
 
 apt-get update
 apt install -y python3-dev libffi-dev gcc libssl-dev python3-venv python3-pip net-tools
