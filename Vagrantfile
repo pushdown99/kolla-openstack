@@ -11,7 +11,7 @@ master = "kolla-openstack"
 
 Vagrant.configure("2") do |config|
   config.vm.define master do |c|
-    c.vm.disk :disk, size: "40GB", primary: true
+    c.vm.disk :disk, size: "60GB", primary: true
     c.vm.box=box
     c.vm.box_version = ver
     c.vm.provider :hyperv do |v|
