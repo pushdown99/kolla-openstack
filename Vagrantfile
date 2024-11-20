@@ -11,13 +11,13 @@ master = "openstack"
 
 Vagrant.configure("2") do |config|
   config.vm.define master do |c|
-    c.vm.disk :disk, size: "30GB", primary: true
+    c.vm.disk :disk, size: "40GB", primary: true
     c.vm.box=box
     c.vm.box_version = ver
     c.vm.provider :hyperv do |v|
       v.vmname=master
-      v.cpus=4
-      v.memory=4096
+      v.cpus=6
+      v.memory=8192
       v.linked_clone=true
     end
 

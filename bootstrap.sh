@@ -32,15 +32,20 @@ cp -r venv/share/kolla-ansible/etc_examples/kolla/* /etc/kolla
 cp -r venv/share/kolla-ansible/ansible/inventory/* .
 mv /etc/kolla/globals.yml /etc/kolla/globals.yml.bak
 
-ipaddr = `ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
+num=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1 | cut -d\. -f4`
+num1=$(($num+1))
+num2=$(($num+2))
+
+ip1="${ipaddr//$num/$num1}"
+ip2="${ipaddr//$num/$num2}"
 
 cat << EOF | sudo tee /etc/kolla/globals.yml
 kolla_base_distro: "ubuntu"
 kolla_install_type: "source"
 openstack_release: "yoga"
 
-kolla_internal_vip_address: "172.17.177.20"
-kolla_external_vip_address: "172.17.177.21"
+kolla_internal_vip_address: "$ip1"
+kolla_external_vip_address: "$ip2"
 network_interface: "eth0"
 neutron_external_interface: "eth0"
 neutron_plugin_agent: "openvswitch"
@@ -70,5 +75,15 @@ chown -R $USER:$USER /etc/ansible
 
 kolla-genpwd
 
-
 sed -i 's/stable\/yoga/unmaintained\/yoga/g' venv/share/kolla-ansible/requirements.yml
+
+#source venv/bin/activate
+#ansible -i all-in-one all -m ping 
+#kolla-ansible install-deps
+
+#apt install --reinstall ca-certificates
+
+#kolla-ansible -i all-in-one bootstrap-servers
+#kolla-ansible -i all-in-one prechecks
+#kolla-ansible -i all-in-one deploy
+#kolla-ansible -i all-in-one post-deploy 
