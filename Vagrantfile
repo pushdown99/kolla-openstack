@@ -7,7 +7,7 @@ num = 2
 ip = '192.168.0.10'
 broad = '192.168.0.255'
 port = 1003
-master = "openstack"
+master = "kolla-openstack"
 
 Vagrant.configure("2") do |config|
   config.vm.define master do |c|
@@ -16,8 +16,8 @@ Vagrant.configure("2") do |config|
     c.vm.box_version = ver
     c.vm.provider :hyperv do |v|
       v.vmname=master
-      v.cpus=6
-      v.memory=8192
+      v.cpus=4
+      v.memory=4096
       v.linked_clone=true
     end
 

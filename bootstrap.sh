@@ -60,8 +60,6 @@ enable_horizon: "yes"
 enable_neutron_provider_networks: "yes"
 EOF
 
-chown -R $USER:$USER /etc/kolla
-
 mkdir /etc/ansible
 cat << EOF | sudo tee /etc/ansible/ansible.cfg
 [defaults]
@@ -71,12 +69,16 @@ pipelining=True
 forks=100
 EOF
 
-chown -R $USER:$USER /etc/ansible
+sed -i 's/stable\/yoga/unmaintained\/yoga/g' venv/share/kolla-ansible/requirements.yml
 
 kolla-genpwd
 
-sed -i 's/stable\/yoga/unmaintained\/yoga/g' venv/share/kolla-ansible/requirements.yml
+chown -R $USER:$USER venv
+chown -R $USER:$USER /etc/kolla
+chown -R $USER:$USER /etc/ansible
 
+
+echo "Run : . venv/bin/activate"
 #source venv/bin/activate
 #ansible -i all-in-one all -m ping 
 #kolla-ansible install-deps
