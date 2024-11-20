@@ -3,7 +3,13 @@
 # https://medium.com/btech-engineering/install-openstack-aio-with-kolla-ansible-in-ubuntu-2b98fc9de4ce
 
 
-#lvrename /dev/ubuntu-vg/ubuntu-lv /dev/ubuntu-vg/ubuntu-lv
+parted /dev/sdb mklabel msdos
+parted /dev/sdb mkpart primary ext4 0% 100%
+udevadm settle
+
+pvcreate /dev/sdb1
+vgcreate cinder-volumes /dev/sdb1
+lvcreate -l 100%FREE -n cinder-volumes-lv cinder-volumes
 
 growpart /dev/sda 3
 pvresize /dev/sda3
@@ -82,7 +88,7 @@ chown -R $USER:$USER venv
 chown -R $USER:$USER /etc/kolla
 chown -R $USER:$USER /etc/ansible
 
-vgrename ubuntu-vg cinder-volumes
+#vgrename ubuntu-vg cinder-volumes
 
 echo "Run : . venv/bin/activate"
 #source venv/bin/activate
