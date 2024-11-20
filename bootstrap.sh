@@ -71,7 +71,10 @@ forks=100
 EOF
 
 sed -i 's/stable\/yoga/unmaintained\/yoga/g' venv/share/kolla-ansible/requirements.yml
+
+# https://bugs.launchpad.net/kolla-ansible/+bug/2015497
 sed -i 's/set -o pipefail &&/set -o pipefail && sleep 10 &&/g' venv/share/kolla-ansible/ansible/roles/nova-cell/handlers/main.yml
+sed -i 's/libvirt_enable_sasl: true/libvirt_enable_sasl: false/g' venv/share/kolla-ansible/ansible/roles/nova-cell/defaults/main.yml
 
 kolla-genpwd
 
