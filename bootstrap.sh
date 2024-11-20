@@ -8,7 +8,7 @@
 growpart /dev/sda 3
 pvresize /dev/sda3
 lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv -r
-vgrename ubuntu-vg cinder-volumes
+
 #resize2fs /dev/ubuntu-vg/ubuntu-lv
 
 ipaddr=`ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1`
@@ -17,6 +17,7 @@ echo ${ipaddr} ' openstack' >> /etc/hosts
 
 apt-get update
 apt install -y python3-dev libffi-dev gcc libssl-dev python3-venv python3-pip net-tools
+apt install -y --reinstall ca-certificates
 python3 -m venv venv
 source venv/bin/activate
 
@@ -70,6 +71,7 @@ forks=100
 EOF
 
 sed -i 's/stable\/yoga/unmaintained\/yoga/g' venv/share/kolla-ansible/requirements.yml
+sed -i 's/set -o pipefail &&/set -o pipefail && sleep 10 &&/g' venv/share/kolla-ansible/ansible/roles/nova-cell/handlers/main.yml
 
 kolla-genpwd
 
@@ -77,6 +79,7 @@ chown -R $USER:$USER venv
 chown -R $USER:$USER /etc/kolla
 chown -R $USER:$USER /etc/ansible
 
+vgrename ubuntu-vg cinder-volumes
 
 echo "Run : . venv/bin/activate"
 #source venv/bin/activate
